@@ -11,21 +11,50 @@
 
 	<script>
 		function requisitarPagina(url){
+			//incluindo gif de loagind na pagina
+			document.getElementById('conteudo').innerHTML = ''
+			if (!document.getElementById('loading')) {
 
+				let imgLoading = document.createElement('img')
+				imgLoading.id = 'loading'
+				imgLoading.src = 'loading.gif'
+				imgLoading.className = 'rounded mx-auto d-block'
+
+				document.getElementById('conteudo').appendChild(imgLoading)//adicionando a img loading como filho da 
+			}
 			let ajax = new XMLHttpRequest() // objeto que nos permite configurar a url e disparar requisições
 
 			ajax.open('GET',url) // qual url será requisitada e o metodo utilizado no processo
-			ajax.send() // disparar comando apartir da instancia do objeto o método send
+
+			//testando requisição não iniciada state = 0 acontece se objAjax.open nao for estabelecida
+			//testando requisição estabelecida state = 1 acontece depois de instanciarmos e abrirmos com obAjax.open
+			console.log(ajax.readyState)
+			//lógica que fique como ouvinte para o progresso da requisição
 			
+			//testando requisição recebida pelo servidor state = 2 quando o servidor recebe a solicitação enviada 
+			//objAjax.send , para acompanhar a mudança de estado usando ajaxObj.onreadystatechange 
+			ajax.onreadystatechange = () => {//atributo executado sempre que o state da função é modificadao
+
+				//verifica se o estado esta finalizado
+				if (ajax.readyState == 4 && ajax.status == 200) { //ajax.status //recupera o status da requisição	
+					
+					document.getElementById('conteudo').innerHTML = ajax.responseText
+					//document.getElementById('loading').remove() // remove o elemento depoois que o loading é concluido
+				}
+
+				if (ajax.readyState == 4 && ajax.status == 404) { 
+					document.getElementById('conteudo').innerHTML = 'requisição finalizada porém o recurso solicitado nao foi encontrado'
+					//document.getElementById('loading').remove() como o innerHTML modifica o objeto e remove todos seus filhos nao é mais necessario remover
+				}
+
+			} 
+
+			ajax.send() // disparar comando apartir da instancia do objeto o método send	
+
 		}
-
 	</script>
-
-
 </head>
-
 <body>
-
 	<!-- Static navbar -->
 	<nav class="navbar navbar-light bg-light mb-4">
 		<div class="container">
@@ -35,26 +64,22 @@
 		</div>
 	</nav>
 
-
 	<div class="container">
-
 		<div class="row mb-2">
 			<div class="col-md-4 center"></div>
 			<div class="col-md-4 center">
-				<a href="#" class="btn btn-primary" onclick="requisitarPagina('pagina_1_conteudo.html')">Página 1</a>
-				<a href="#" class="btn btn-primary" onclick="requisitarPagina('pagina_2_conteudo.html')">Página 2</a>
-				<a href="#" class="btn btn-primary" onclick="requisitarPagina('pagina_3_conteudo.html')">Página 3</a>
+				<a href="#" class="btn btn-primary" onclick="requisitarPagina('pagina_1_conteudo.php')">Página 1</a>
+				<a href="#" class="btn btn-primary" onclick="requisitarPagina('pagina_2_conteudo.php')">Página 2</a>
+				<a href="#" class="btn btn-primary" onclick="requisitarPagina('pagina_3_conteudo.php')">Página 3</a>
 			</div>
 			<div class="col-md-4 center"></div>
 		</div>
 
 		<div class="row">
 			<div class="col-md-1"></div>
+				<div id="conteudo" class="col-md-10">
 
-			<div class="col-md-10">
-
-			</div>
-
+				</div>
 			<div class="col-md-1"></div>
 		</div>
 
